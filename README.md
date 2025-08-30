@@ -87,22 +87,16 @@ Soll die Web-App überhaupt nicht genutzt werden, sind folgende Ordner bzw. Date
 
 ## Docker Image
 
-Das Tool kann als Docker Container betrieben werden. Dafür ist es notwendig ein Image zu erstellen:
+Das Tool kann als Docker Container betrieben werden. Sowohl die Web-App als auch der Datenabruf über `cron.py` sind mit dem Image möglich:
 
 ```bash
-docker build -t ti-monitoring -f docker/Dockerfile .
-```
-
-Sowohl die Web-App als auch der Datenabruf über `cron.py` sind mit dem Image möglich:
-
-```bash
-docker run -it -p 8080:8080 ti-monitoring app
-docker run -it ti-monitoring cron
+docker run -it -p 8080:8080 ghcr.io/lsr-dev/ti-monitoring app
+docker run -it ghcr.io/lsr-dev/ti-monitoring cron
 ```
 
 Damit der Container der Web-App auf die `data.hdf5` Datei des `cron.py` Skripts zugreifen kann, ist es erforderlich, dass die Container über ein geteiltes `/data` Verzeichnis verfügen. Die Datei `docker/docker-compose.yaml` liefert ein Beispiel dafür unter Verwendung eines Docker Volumes:
 
-```
+```bash
 docker compose -f docker/docker-compose.yaml up app
 docker compose -f docker/docker-compose.yaml up cron
 ```
@@ -122,6 +116,12 @@ Die Konfiguration des Docker Image erfolgt über Umgebungsvariablen:
 | TI_MONITORING_SMTP_FROM                 | From: E-Mail für Benachrichtigungen          |
 | TI_MONITORING_HOME_URL                  | Home-URL der Web-App                         |
 | TI_MONITORING_STATS_DELTA_HOURS         | Historischer Zeitraum in Stunden der Web-App |
+
+Um ein neues Image zu erstellen, das lokale Änderungen an dem Projekt enthält, kann `docker build` verwendet werden:
+
+```bash
+docker build -t ti-monitoring -f docker/Dockerfile .
+```
 
 ---
 **DISCLAIMER**
