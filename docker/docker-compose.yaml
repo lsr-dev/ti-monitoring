@@ -1,0 +1,28 @@
+
+services:
+  app:
+    image: ti-monitoring:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: ["app"]
+    volumes:
+      - data:/data
+    ports:
+      - "8080:8080"
+    environment:
+      TI_MONITORING_HOME_URL: http://localhost:8080
+    restart: unless-stopped
+
+  cron:
+    image: ti-monitoring:latest
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: ["cron"]
+    volumes:
+      - data:/data
+    restart: on-failure
+
+volumes:
+  data:
