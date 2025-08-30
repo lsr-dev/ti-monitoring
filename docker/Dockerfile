@@ -21,4 +21,5 @@ COPY docker/entrypoint.sh /entrypoint.sh
 ENV TI_MONITORING_FILE_NAME=/data/data.hdf5
 
 ENTRYPOINT ["/entrypoint.sh"]
+# Default to running Web-App
 CMD ["app"]
