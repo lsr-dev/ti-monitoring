@@ -85,6 +85,44 @@ Soll die Web-App überhaupt nicht genutzt werden, sind folgende Ordner bzw. Date
 * pages
 * app.py
 
+## Docker Image
+
+Das Tool kann als Docker Container betrieben werden. Dafür ist es notwendig ein Image zu erstellen:
+
+```bash
+docker build -t ti-monitoring -f docker/Dockerfile .
+```
+
+Sowohl die Web-App als auch der Datenabruf über `cron.py` sind mit dem Image möglich:
+
+```bash
+docker run -it -p 8080:8080 ti-monitoring app
+docker run -it ti-monitoring cron
+```
+
+Damit der Container der Web-App auf die `data.hdf5` Datei des `cron.py` Skripts zugreifen kann, ist es erforderlich, dass die Container über ein geteiltes `/data` Verzeichnis verfügen. Die Datei `docker/docker-compose.yaml` liefert ein Beispiel dafür unter Verwendung eines Docker Volumes:
+
+```
+docker compose -f docker/docker-compose.yaml up app
+docker compose -f docker/docker-compose.yaml up cron
+```
+
+Die Konfiguration des Docker Image erfolgt über Umgebungsvariablen:
+
+| Name                                    | Beschreibung                                 |
+|-----------------------------------------|----------------------------------------------|
+| TI_MONITORING_URL                       | URL der Gematik API                          |
+| TI_MONITORING_FILE_NAME                 | Pfad zur hdf5 Datei                          |
+| TI_MONITORING_NOTIFICATIONS             | Toggle für Benachrichtigungen (True/False)   |
+| TI_MONITORING_NOTIFICATIONS_CONFIG_FILE | Pfad zur notifications.json                  |
+| TI_MONITORING_SMTP_HOST                 | SMTP Server Host                             |
+| TI_MONITORING_SMTP_PORT                 | SMTP Server Port                             |
+| TI_MONITORING_SMTP_USER                 | SMTP Server Nutzername                       |
+| TI_MONITORING_SMTP_PASSWORD             | SMTP Server Passwort                         |
+| TI_MONITORING_SMTP_FROM                 | From: E-Mail für Benachrichtigungen          |
+| TI_MONITORING_HOME_URL                  | Home-URL der Web-App                         |
+| TI_MONITORING_STATS_DELTA_HOURS         | Historischer Zeitraum in Stunden der Web-App |
+
 ---
 **DISCLAIMER**
 
