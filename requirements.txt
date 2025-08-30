@@ -1,0 +1,10 @@
+dash==3.2.0
+gunicorn==23.0.0
+h5py==3.14.0
+matplotlib==3.10.6
+numpy==2.3.2
+pandas==2.3.2
+plotly==6.3.0
+pytz==2025.2
+requests==2.32.5
+tzlocal==5.3.1
