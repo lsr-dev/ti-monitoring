@@ -1,10 +1,7 @@
 
 services:
   app:
-    image: ti-monitoring:latest
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
+    image: ghcr.io/lsr-dev/ti-monitoring
     command: ["app"]
     volumes:
       - data:/data
@@ -15,10 +12,7 @@ services:
     restart: unless-stopped
 
   cron:
-    image: ti-monitoring:latest
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
+    image: ghcr.io/lsr-dev/ti-monitoring
     command: ["cron"]
     volumes:
       - data:/data
