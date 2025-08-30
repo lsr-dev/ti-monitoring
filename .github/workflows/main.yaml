@@ -58,6 +58,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           tags: ${{ env.DOCKER_IMAGE }}
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           file: ./docker/Dockerfile
           context: .
 
