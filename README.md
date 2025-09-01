@@ -8,7 +8,7 @@ Die Funktionen lassen sich wie folgt zusammenfassen:
 * __Abruf und Archivierung__<br>
 Die Kernfunktionalität besteht in der regelmäßigen Abfrage des Verfügbarkeitsstatus sämtlicher zentraler TI-Komponenten über eine öffentliche Schnittstelle der gematik GmbH. Die Ergebnisse werden strukturiert in einer hdf5-Datei gespeichert. So können auch für längere Beobachtungszeiträume statistische Auswertungen durchgeführt werden, um beispielsweise die Einhaltung von SLAs zu beurteilen.
 * __Benachrichtigungen__<br>
-Bei Änderungen der Verfügbarkeit können Benachrichtigungen per E-Mail versendet werden. Zur Filterung der TI-Komponenten kann wahlweise eine White- oder Blacklist definiert werden.
+Bei Änderungen der Verfügbarkeit können Benachrichtigungen per E-Mail und/oder Push-Benachrichtigung versendet werden. Zur Filterung der TI-Komponenten kann wahlweise eine White- oder Blacklist definiert werden.
 * __Web-App__<br>
 Der aktuelle Status sämtlicher TI-Komponenten lässt sich nach Produkten gruppiert in einer interaktiven Web-App einsehen. Darüber hinaus kann für die einzelnen Komponenten eine Statistik der letzten Stunden aufgerufen werden.
 
