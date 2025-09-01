@@ -72,7 +72,7 @@ In der Datei `notifications.json` können mehrere Profile definiert werden. Ein 
 Hier ein Beispiel für eine E-Mail-Benachrichtigung:
 ![E-Mail-Benachrichtigung über Störung (Beispiel)](docs/img/Mail%20Beispiel%20Störung.png "E-Mail-Benachrichtigung über Störung (Beispiel)")
 
-### Push-Benachrichtigungen voa ntfy
+### Push-Benachrichtigungen via ntfy
 Sofern eine [ntfy](https://github.com/binwiederhier/ntfy)-Instanz vorhanden ist, lassen sich optional Push-Benachrichtigungen versenden. Hierfür muss im Benachrichtigungsprofil ein Thema (`push_topic`) angegeben werden. Zudem sind in der Datei `myconfig.py` die URL zur ntfy-Instanz (`ntfy_url`) sowie ein gültiger Access-Token (`ntfy_token`) eines Users mit schreibenden Zugriff auf dieses Thema zu hinterlegen. Sofern die Variable `push_notifications` den Wert `True` besitzt, wird der Versand von Push-Benachrichtigungen über das Skrip `cron.py` angestoßen. Die Benachrichtigungen können über die mobilen ntfy-Apps ([Apple App Store](https://apps.apple.com/de/app/ntfy/id1625396347), [Google Play Store](https://play.google.com/store/apps/details?id=io.heckel.ntfy)) oder über kompatible Browser ausgespielt werden.
 
 **Hinweise:**
