@@ -33,12 +33,14 @@ def serve_layout():
             ]),
 		]),
 		html.Div(id = 'footer', children = [
-            html.Div([html.A('Home', href='https://lukas-schmidt-russnak.de', target='_blank')]),
+            html.Div([html.A('Home', href=home_url, target='_self')]),
+            html.Div([html.A('Alerts', href=home_url + '/alerts', target='_self')]),
             html.Div([html.A('Dokumentation', href='https://github.com/lsr-dev/ti-monitoring', target='_blank')]),
             html.Div([html.A('Presse', href='https://heise.de/-10625281', target='_blank')]),
             html.Div([html.A('Datenschutz', href='https://lukas-schmidt-russnak.de/datenschutz/', target='_blank')]),
             html.Div([html.A('Impressum', href='https://lukas-schmidt-russnak.de/impressum/', target='_blank')]),
-            html.Div('© Lukas Schmidt-Russnak')
+            html.Div('© Lukas Schmidt-Russnak'),
+            html.Iframe(id='ntfy_footer', src=ntfy_url)
         ])
     ]
     return layout

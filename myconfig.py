@@ -20,10 +20,19 @@ smtp_settings = {
 }
 
 # home url for dash app
-home_url = 'https://ti-monitoring.lukas-schmidt-russnak.de'
+home_url = 'https://ti-monitoring.de'
 
 # time frame for statistics in web app
 stats_delta_hours = 12
+
+# switching push notofications on/off
+push_notifications = False
+
+# base url for push notifications
+ntfy_url = 'https://push.ti-monitoring.de'
+
+# access token for push notifications
+ntfy_token = '********'
 
 def main():
     return

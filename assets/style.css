@@ -1,11 +1,10 @@
 html {
-    font-family: Helvetica
+    font-family: Helvetica;
 }
 body {
     display: flex;
     justify-content: center;
     margin: 0px;
-
 }
 #react-entry-point {
     box-shadow: 0 0 20px 5px lightgrey;
@@ -16,7 +15,7 @@ main, header, #footer {
     padding: 5px 20px;
 }
 main {
-    margin-top: 90px
+    margin-top: 90px;
 }
 header {
     display: flex;
@@ -48,6 +47,11 @@ header {
     flex-grow: 1;
     text-align: center;
     margin: 15px;
+}
+#ntfy_footer {
+    width: 0;
+    height: 0;
+    border: none;
 }
 .box {
     margin: 12px 0px;

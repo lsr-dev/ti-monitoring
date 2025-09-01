@@ -14,7 +14,7 @@ def serve_layout():
         if product not in products:
             products.append(product)
     layout = html.Div([
-        html.P('Hier finden Sie eine nach Produkten gruppierte Übersicht sämtlicher TI-Komponenten. Neue Daten werden alle 5 Minuten bereitgestellt. Laden Sie die Seite neu, um die Ansicht zu aktualisieren.'),
+        html.P('Hier finden Sie eine nach Produkten gruppierte Übersicht zentraler Komponenten der Telematikinfrastruktur (TI). Neue Daten werden alle 5 Minuten bereitgestellt. Laden Sie die Seite neu, um die Ansicht zu aktualisieren.'),
         html.Div(className='accordion', children = [
             html.Div(className='accordion-element', children = [
                 html.Div(

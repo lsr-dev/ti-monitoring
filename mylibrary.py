@@ -261,6 +261,83 @@ def send_notifications(file_name, notifications_config_file, smtp_settings, home
             print('Sending notification for profile failed. Please check notifications config file.')
             pass
 
+def create_markdown_list_item_for_change(change):
+    """
+    Creates a markdown list item element for a configuration item with changed availability status
+
+    Args:
+        change (DataFrame): data for an individual configuration item containing information
+        such as organization and product as well as current availability and availability difference
+
+    Returns:
+        str: html list item element
+    """
+    if change['availability_difference'] == 1:
+        md_str = '🟢 '
+    elif change['availability_difference'] == -1:
+        md_str = '🔴 '
+    else:
+        md_str = '⚫️ '
+    md_str += str(change['ci']) + ': ' + str(change['product']) + ', ' + str(change['name']) + ', ' + str(change['organization']) + ' '
+    if change['availability_difference'] == 1:
+        md_str += 'ist wieder verfügbar'
+    elif change['availability_difference'] == -1:
+        md_str += 'ist nicht mehr verfügbar'
+    else:
+        md_str += 'keine Veränderung'
+    md_str += ', Stand: ' + str(pretty_timestamp(change['time'])) + '\n'
+    return md_str
+
+def send_push_notifications(file_name, notifications_config_file, home_url, ntfy_url, ntfy_token):
+    """
+    Sends push notifications for each notification configuration about all
+    changes that are relevant for the respective configuration
+
+    Args:
+        file_name (str): Path to hdf5 file
+        notifications_config_file (str): Path to json file with notification configurations
+        home_url (str): base url of dash app
+        ntfy_url (str): base url for push notifications
+        ntfy_token (str): access token for push notifications
+
+    Returns:
+        None
+    """
+    # get notification config
+    with open(notifications_config_file, 'r', encoding='utf-8') as f:
+        notification_config = json.load(f)
+    # get changes 
+    ci_data = get_data_of_all_cis(file_name)
+    changes = ci_data[ci_data['availability_difference']!=0]
+    changes_sorted = changes.sort_values(by = 'availability_difference')
+    # filter relevant changes for each config and send mails
+    for config in notification_config:
+        if (config['push_topic'] != ''):
+            try:
+                if (config['type'] == 'whitelist'):
+                    relevant_changes = changes_sorted[changes_sorted['ci'].isin(config['ci_list'])]
+                elif (config['type'] == 'blacklist'):
+                    relevant_changes = changes_sorted[~changes_sorted['ci'].isin(config['ci_list'])]
+                number_of_relevant_changes = len(relevant_changes)
+                if number_of_relevant_changes > 0:
+                    message = ""
+                    for index, change in relevant_changes.iterrows():
+                        message += create_markdown_list_item_for_change(change)
+                    subject = str(number_of_relevant_changes) + ' Änderung(en) der Verfügbarkeit'
+                    ntfy_topic_url = ntfy_url + '/' + config['push_topic']
+                    requests.post(ntfy_topic_url,
+                        data=message.encode(encoding='utf-8'),
+                        headers={
+                            "title": subject.encode(encoding='utf-8'),
+                            "markdown": "yes",
+                            "authorization": "Bearer " + ntfy_token,
+                            "actions": f"view, Übersicht, {home_url}; view, Alerts, {ntfy_url}; view, Fachportal, https://fachportal.gematik.de/ti-status".encode(encoding='utf-8')
+                        }
+                    )
+            except:
+                print('Sending push notification for profile failed. Please check notifications config file.')
+                pass
+
 def main():
     return
 

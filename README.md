@@ -55,7 +55,9 @@ Die Untergruppe des Konfigurationsobjektes in der Gruppe `configuration_items` e
 Je nach Systemleistung kann es sinnvoll sein, die Datei `data.hdf5` von Zeit zu Zeit archivieren. Hierzu kann die Datei beispielsweise per Cronjob in ein Archiv-Verzeichnis verschoben werden.
 
 ## Benachrichtigungen
-Auf Wunsch können bei Änderungen der Verfügbarkeit Beanchrichtigungen per E-Mail versendet werden. Dies geschieht ebenfalls über das Skrip `cron.py`, sofern in der Datei `myconfig.py` die Variable `notifications` den Wert `True` besitzt. Die SMTP-Verbindungsdaten werden ebenfalls in der Datei `myconfig.py` hinterlegt.
+
+### E-Mail
+Auf Wunsch können bei Änderungen der Verfügbarkeit Benachrichtigungen per E-Mail versendet werden. Dies geschieht ebenfalls über das Skrip `cron.py`, sofern in der Datei `myconfig.py` die Variable `notifications` den Wert `True` besitzt. Die SMTP-Verbindungsdaten werden ebenfalls in der Datei `myconfig.py` hinterlegt.
 
 In der Datei `notifications.json` können mehrere Profile definiert werden. Ein Profil besteht aus folgenden Eigenschaften:
 
@@ -65,11 +67,24 @@ In der Datei `notifications.json` können mehrere Profile definiert werden. Ein 
 | recipients | Liste mit mindestens einer E-Mail-Adresse (z.B. `["mail1@example.com", "mail2@example.com"]`) |
 | ci_list | Liste von Konfigurationsobjekten (z.B. `["CI-000001", "CI-0000002"]`) |
 | type | entweder `blacklist` oder `whitelist` (legt fest, wie die Liste der Konfigurationsobjekte behandelt wird) |
+| push_topic | Thema für Push-Benachrichtigungen via ntfy (z.B. `TI`)|  
 
 Hier ein Beispiel für eine E-Mail-Benachrichtigung:
 ![E-Mail-Benachrichtigung über Störung (Beispiel)](docs/img/Mail%20Beispiel%20Störung.png "E-Mail-Benachrichtigung über Störung (Beispiel)")
 
+### Push-Benachrichtigungen voa ntfy
+Sofern eine [ntfy](https://github.com/binwiederhier/ntfy)-Instanz vorhanden ist, lassen sich optional Push-Benachrichtigungen versenden. Hierfür muss im Benachrichtigungsprofil ein Thema (`push_topic`) angegeben werden. Zudem sind in der Datei `myconfig.py` die URL zur ntfy-Instanz (`ntfy_url`) sowie ein gültiger Access-Token (`ntfy_token`) eines Users mit schreibenden Zugriff auf dieses Thema zu hinterlegen. Sofern die Variable `push_notifications` den Wert `True` besitzt, wird der Versand von Push-Benachrichtigungen über das Skrip `cron.py` angestoßen. Die Benachrichtigungen können über die mobilen ntfy-Apps ([Apple App Store](https://apps.apple.com/de/app/ntfy/id1625396347), [Google Play Store](https://play.google.com/store/apps/details?id=io.heckel.ntfy)) oder über kompatible Browser ausgespielt werden.
+
+**Hinweise:**
+
+* Um Push-Benachrichtigungen im Browser auch dann anzuzeigen, wenn lediglich die Seiten des TI-Monitorings geöffnet sind, ist die Adresse der ntfy-Instanz (`ntfy_url`) als unsichtbares Iframe in den Footer integriert.
+
+* Push-Benachrichtigungen beinhalten standardmäßig einen Action-Button, der zur Startseite der Web-App führt. Soll das TI-Monitoring ohne Web-App genutzt werden, kann in der Datei `myconfig.py` als `home_url` die Adresse einer öffentlichen TI-Monitoring-Instanz angegeben werden. Alternativ sollte der entsprechende Button aus der Funktion `send_push_notifications()` angepasst bzw. entfernt werden.
+
+* Soll die Web-App ohne Push-Benachrichtigungen genutzt werden, ist die Datei `pages/alerts.py` obsolet. Außerdem sollten der entsprechende Link und das Iframe aus dem Footer (siehe `app.py`) entfernt werden.
+
 ## Web-App
+
 Der aktuelle Status verschiedener Komponenten kann optional auch in Form einer Web-App auf Basis des [Dash-Frameworks](https://dash.plotly.com) bereitgestellt werden. Die App kann z.B. in Kombination mit uWSGi und nginx (ähnlich [wie hier beschrieben](https://carpiero.medium.com/host-a-dashboard-using-python-dash-and-linux-in-your-own-linux-server-85d891e960bc) veröffentlicht werden.
 
 Auf der Startseite der App werden die Komponenten nach Produkt gruppiert dargestellt. Durch Anklicken der Gruppen lassen sich die jeweiligen Komponenten einblenden.

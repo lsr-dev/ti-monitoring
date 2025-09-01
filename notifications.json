@@ -3,12 +3,14 @@
     "name": "",
     "recipients": [],
     "ci_list": [],
-    "type": ""
+    "type": "",
+    "push_topic": ""
   },
   {
     "name": "",
     "recipients": [],
     "ci_list": [],
-    "type": ""
+    "type": "",
+    "push_topic": ""
   }
 ]
