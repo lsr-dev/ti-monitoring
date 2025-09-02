@@ -331,7 +331,7 @@ def send_push_notifications(file_name, notifications_config_file, home_url, ntfy
                             "title": subject.encode(encoding='utf-8'),
                             "markdown": "yes",
                             "authorization": "Bearer " + ntfy_token,
-                            "actions": f"view, Übersicht, {home_url}; view, Alerts, {ntfy_url}; view, Fachportal, https://fachportal.gematik.de/ti-status".encode(encoding='utf-8')
+                            "actions": f"view, Übersicht, {home_url}; view, Alerts, {ntfy_topic_url}; view, Fachportal, https://fachportal.gematik.de/ti-status".encode(encoding='utf-8')
                         }
                     )
             except:
