@@ -74,7 +74,7 @@ Hier ein Beispiel für eine E-Mail-Benachrichtigung:
 
 ### Push-Benachrichtigungen via ntfy
 Sofern eine [ntfy](https://github.com/binwiederhier/ntfy)-Instanz vorhanden ist, lassen sich optional Push-Benachrichtigungen versenden. Hierfür muss im Benachrichtigungsprofil ein Thema (`push_topic`) angegeben werden. Zudem sind in der Datei `myconfig.py` die URL zur ntfy-Instanz (`ntfy_url`) sowie ein gültiger Access-Token (`ntfy_token`) eines Users mit schreibenden Zugriff auf dieses Thema zu hinterlegen. Sofern die Variable `push_notifications` den Wert `True` besitzt, wird der Versand von Push-Benachrichtigungen über das Skrip `cron.py` angestoßen. Die Benachrichtigungen können über die mobilen ntfy-Apps ([Apple App Store](https://apps.apple.com/de/app/ntfy/id1625396347), [Google Play Store](https://play.google.com/store/apps/details?id=io.heckel.ntfy)) oder über kompatible Browser ausgespielt werden.
-
+![Push-Benachrichtigungen (Beispiel)](docs/img/Push-Benachrichtigungen%20Beispiel.png "Push-Benachrichtigungen (Beispiel)")
 **Hinweise:**
 
 * Um Push-Benachrichtigungen im Browser auch dann anzuzeigen, wenn lediglich die Seiten des TI-Monitorings geöffnet sind, ist die Adresse der ntfy-Instanz (`ntfy_url`) als unsichtbares Iframe in den Footer integriert.
@@ -88,6 +88,7 @@ Sofern eine [ntfy](https://github.com/binwiederhier/ntfy)-Instanz vorhanden ist,
 Der aktuelle Status verschiedener Komponenten kann optional auch in Form einer Web-App auf Basis des [Dash-Frameworks](https://dash.plotly.com) bereitgestellt werden. Die App kann z.B. in Kombination mit uWSGi und nginx (ähnlich [wie hier beschrieben](https://carpiero.medium.com/host-a-dashboard-using-python-dash-and-linux-in-your-own-linux-server-85d891e960bc) veröffentlicht werden.
 
 Auf der Startseite der App werden die Komponenten nach Produkt gruppiert dargestellt. Durch Anklicken der Gruppen lassen sich die jeweiligen Komponenten einblenden.
+![Mockup der App (Beispiel)](docs/img/TI-Monitoring%20Mockup.png "Mockup der App (Beispiel)")
 ![Screenshot aus der App: Startseite der App (Beispiel)](docs/img/App%20Home%20Beispiel.png "Startseite der App (Beispiel)")
 ![Screenshot aus der App: Startseite der App mit Störung (Beispiel)](docs/img/App%20Home%20Beispiel%20Störung.png "Startseite der App mit Störung (Beispiel)")
 Per Klick auf die ID einer Komponente lässt sich eine Statistik der letzten Stunden aufrufen.
