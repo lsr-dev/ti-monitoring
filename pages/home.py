@@ -7,7 +7,11 @@ dash.register_page(__name__, path='/')
 
 def serve_layout():
     cis = get_data_of_all_cis(file_name)
-    grouped = cis.groupby('product')
+    cis = cis.sort_values(
+        by='product',
+        key=lambda col: col.str.lower()
+    )
+    grouped = cis.groupby('product', sort=False)
     products = []
     for index, row in cis.iterrows():
         product = row['product']
