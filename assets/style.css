@@ -1,134 +1,676 @@
-html {
-    font-family: Helvetica;
+:root {
+    color-scheme: light dark;
+
+    --bg: #f5f7fa;
+    --surface: #ffffff;
+    --surface-hover: #f1f4f8;
+    --surface-muted: #eef1f5;
+
+    --text: #1f2937;
+    --text-muted: #6b7280;
+
+    --border: #dfe3e8;
+    --border-strong: #c8ced6;
+
+    --link: #2563eb;
+    --link-hover: #1d4ed8;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.10);
+
+    --radius: 10px;
+    --radius-sm: 6px;
+
+    --banner-bg: #1d4ed8;
+    --maintenance-bg: #b91c1c;
+
+    --available: #16a34a;
+    --impaired: #f59e0b;
+    --unavailable: #dc2626;
 }
+
+
+/* =========================================================
+   DARK MODE
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0f1115;
+        --surface: #181b21;
+        --surface-hover: #22262e;
+        --surface-muted: #242830;
+
+        --text: #f1f5f9;
+        --text-muted: #9ca3af;
+
+        --border: #30353f;
+        --border-strong: #454b57;
+
+        --link: #60a5fa;
+        --link-hover: #93c5fd;
+
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+        --shadow-md: 0 10px 35px rgba(0, 0, 0, 0.45);
+
+        --banner-bg: #2947c7;
+        --maintenance-bg: #b91c1c;
+
+        --available: #22c55e;
+        --impaired: #fbbf24;
+        --unavailable: #ef4444;
+    }
+
+    #logo {
+        filter: invert(1);
+    }
+}
+
+
+/* =========================================================
+   BASE
+   ========================================================= */
+
+html {
+    font-family:
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    color-scheme: inherit;
+    background: var(--bg);
+}
+
 body {
+    margin: 0;
+    min-height: 100vh;
+
     display: flex;
     justify-content: center;
-    margin: 0px;
+
+    background: var(--bg);
+    color: var(--text);
+
+    line-height: 1.5;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
+
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
 #react-entry-point {
-    box-shadow: 0 0 20px 5px lightgrey;
+    width: 100%;
+    max-width: 1240px;
+    min-height: 100vh;
+
+    background: var(--surface);
+
+    box-shadow: var(--shadow-md);
 }
-main, header, #footer {
-    max-width: 1200px;
-    width: calc(100vw - 40px);
-    padding: 5px 20px;
+
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+
+main,
+header,
+#footer {
+    box-sizing: border-box;
+
+    width: 100%;
+    max-width: 1240px;
+
+    padding-left: 20px;
+    padding-right: 20px;
 }
+
 main {
-    margin-top: 90px;
+    margin-top: 95px;
+
+    padding-top: 20px;
+    padding-bottom: 30px;
 }
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 header {
     display: flex;
+    flex-wrap: wrap;
     position: fixed;
-    background-color: white;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
     z-index: 1;
+
+    background: var(--surface);
+
+    border-bottom: 1px solid var(--border);
+
+    box-shadow: var(--shadow-sm);
 }
+
+#header-content {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
 #logo-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin: 0px 40px 0px 0px;
+
+    margin-right: 40px;
 }
+
 #logo {
-    cursor: pointer;
-    height: 50px;
+    display: block;
+
     width: 50px;
+    height: 50px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
 }
+
+#logo:hover {
+    transform: scale(1.05);
+    opacity: 0.85;
+}
+
+
+/* =========================================================
+   BANNERS
+   ========================================================= */
+
+#banner,
+#banner_wartung {
+    box-sizing: border-box;
+
+    flex: 0 0 calc(100% + 40px);
+
+    width: calc(100% + 40px);
+
+    margin-left: -20px;
+    margin-right: -20px;
+
+    padding: 5px 20px;
+
+    text-align: center;
+
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+#banner {
+    background: var(--banner-bg);
+}
+
+#banner_wartung {
+    background: var(--maintenance-bg);
+}
+
+#banner *,
+#banner_wartung * {
+    color: #fff;
+}
+
+
+/* =========================================================
+   PAGE CONTENT
+   ========================================================= */
+
 #_pages_content {
     min-height: 100px;
 }
-#footer {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    background-color: white;
-}
-#footer div {
-    flex-grow: 1;
-    text-align: center;
-    margin: 15px;
-}
-#ntfy_footer {
-    width: 0;
-    height: 0;
-    border: none;
-}
+
+
+/* =========================================================
+   BOXES
+   ========================================================= */
+
 .box {
-    margin: 12px 0px;
-    padding: 10px;
-    background-color: lightgrey;
+    margin: 16px 0;
+    padding: 16px 18px;
+
+    background: var(--surface-muted);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
+
+.box:hover {
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-md);
+}
+
 .box h3 {
-    margin: 0.5em 0em;
+    margin: 0.4em 0 0.7em;
 }
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
 #statistics ul {
+    padding: 0;
+
     list-style: none;
-    padding: 0
 }
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
 .button {
-    font-size: 1.5em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    padding: 8px 14px;
+
+    font-size: 1.05em;
+    font-weight: 500;
+    line-height: 1.4;
+
+    color: var(--text);
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.06);
+
     cursor: pointer;
+
+    -webkit-appearance: none;
+    appearance: none;
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.15s ease,
+        color 0.15s ease;
 }
+
+.button:hover {
+    color: var(--link);
+
+    background: var(--surface-hover);
+
+    border-color: var(--border-strong);
+
+    box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.10);
+
+    transform: translateY(-1px);
+}
+
+.button:active {
+    color: var(--text);
+
+    background: var(--surface-muted);
+
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.06);
+
+    transform: translateY(0);
+}
+
+.button:focus-visible {
+    outline: 2px solid var(--link);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   TOUCH DEVICES
+   ========================================================= */
+
+@media (hover: none) {
+    .button:hover {
+        color: var(--text);
+
+        background: var(--surface);
+
+        border-color: var(--border);
+
+        box-shadow:
+            0 1px 2px rgba(0, 0, 0, 0.06);
+
+        transform: none;
+    }
+
+    .button:active {
+        color: var(--link);
+
+        background: var(--surface-hover);
+
+        border-color: var(--border-strong);
+
+        transform: scale(0.98);
+    }
+}
+
+
+/* =========================================================
+   ACCORDION
+   ========================================================= */
+
 .accordion-element ul {
-  margin: 0px;
+    margin: 0;
 }
+
 .accordion li {
     display: flex;
     align-items: center;
+
     flex-grow: 0;
     flex-shrink: 0;
 }
-.accordion-element-title .availability-icon, .accordion-element-content ul li span {
+
+
+/* =========================================================
+   STATUS ICONS
+   ========================================================= */
+
+.accordion-element-title .availability-icon,
+.accordion-element-content ul li span {
     width: 1em;
     height: 1em;
+
     display: inline-block;
-    border-radius: 50%;
+
     flex-grow: 0;
     flex-shrink: 0;
+
     margin-right: 0.75em;
+
+    border-radius: 50%;
 }
+
 .accordion-element-content ul li span {
     width: 0.5em;
     height: 0.5em;
 }
+
 .availability-icon.available {
-   background-color: green;
+    background: var(--available);
+
+    box-shadow:
+        0 0 0 3px
+        color-mix(
+            in srgb,
+            var(--available) 15%,
+            transparent
+        );
 }
+
 .availability-icon.impaired {
-   background-color: orange;
-   border-radius: 0;
+    background: var(--impaired);
+
+    border-radius: 3px;
 }
+
 .availability-icon.unavailable {
-   background-color: red;
-   border-radius: 0;
+    background: var(--unavailable);
+
+    border-radius: 3px;
 }
+
+
+/* =========================================================
+   ACCORDION TITLE
+   ========================================================= */
+
 .accordion-element-title {
-    border-top: 1px solid grey;
-    padding: 5px 10px;
     display: flex;
+    align-items: center;
+
+    padding: 4px 6px;
+
+    background: transparent;
+
+    border-top: 1px solid var(--border);
+
+    -webkit-tap-highlight-color: transparent;
+
+    transition:
+        background-color 0.15s ease,
+        padding-left 0.15s ease;
 }
+
 .accordion-element-title * {
     pointer-events: none;
 }
-.accordion-element-title:hover {
-    background-color: lightgrey;
-    cursor: pointer;
+
+
+/* ---------------------------------------------------------
+   OPEN STATE
+   --------------------------------------------------------- */
+
+.accordion-element.is-open > .accordion-element-title,
+.accordion-element-title.is-open {
+    background: var(--surface-hover);
 }
+
+
+/* ---------------------------------------------------------
+   DESKTOP HOVER ONLY
+   --------------------------------------------------------- */
+
+@media (hover: hover) and (pointer: fine) {
+    .accordion-element-title:hover {
+        padding-left: 12px;
+
+        background: var(--surface-hover);
+
+        cursor: pointer;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   KEYBOARD FOCUS
+   --------------------------------------------------------- */
+
+.accordion-element-title:focus-visible {
+    outline: 2px solid var(--link);
+    outline-offset: -2px;
+}
+
+
+/* =========================================================
+   GROUP NAME
+   ========================================================= */
+
 .group-name {
     flex-grow: 1;
+
+    font-weight: 500;
 }
+
 .accordion-element:last-of-type {
-    border-bottom: 1px solid grey;
+    border-bottom: 1px solid var(--border);
 }
+
+
+/* =========================================================
+   ACCORDION CONTENT
+   ========================================================= */
+
 .accordion-element-content {
-    transition: 0.2s ease-in-out;
-    overflow: clip;
-    height: 0px;
+    height: 0;
+
+    overflow: hidden;
+
+    color: var(--text-muted);
+
+    transition:
+        height 0.25s ease-in-out,
+        opacity 0.2s ease-in-out;
 }
+
 .accordion-element-content ul {
     padding-top: 20px;
-    padding-bottom: 20px
+    padding-bottom: 20px;
 }
+
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
 a:any-link {
-    color:blue;
+    color: var(--link);
+
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+
+    transition:
+        color 0.15s ease,
+        text-decoration-color 0.15s ease;
+}
+
+a:hover {
+    color: var(--link-hover);
+}
+
+a:focus-visible {
+    outline: 2px solid var(--link);
+    outline-offset: 3px;
+
+    border-radius: 2px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+#footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+
+    background: var(--surface);
+
+    border-top: 1px solid var(--border);
+
+    color: var(--text-muted);
+}
+
+#footer div {
+    flex-grow: 1;
+
+    margin: 15px;
+
+    text-align: center;
+}
+
+#ntfy_footer {
+    width: 0;
+    height: 0;
+
+    border: none;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    #react-entry-point {
+        max-width: none;
+
+        box-shadow: none;
+    }
+
+    main,
+    header,
+    #footer {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    main {
+        margin-top: 95px;
+    }
+
+    #logo-wrapper {
+        margin-right: 20px;
+    }
+
+    #banner,
+    #banner_wartung {
+        flex-basis: calc(100% + 28px);
+
+        width: calc(100% + 28px);
+
+        margin-left: -14px;
+        margin-right: -14px;
+
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .box {
+        padding: 14px;
+
+        border-radius: var(--radius-sm);
+    }
 }
