@@ -61,12 +61,13 @@
     }
 }
 
-html {
-    font-family:
-        Helvetica,
-        Arial,
-        sans-serif;
 
+/* =========================================================
+   BASE
+   ========================================================= */
+
+html {
+    font-family: Helvetica, Arial, sans-serif;
     color-scheme: inherit;
     background: var(--bg);
 }
@@ -116,6 +117,11 @@ main {
     padding-bottom: 30px;
 }
 
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 header {
     display: flex;
     flex-wrap: wrap;
@@ -148,7 +154,7 @@ header {
 
 h1 {
     margin-block-start: 0.5em !important;
-    margin-block-end: 0.5em !important;    
+    margin-block-end: 0.5em !important;
 }
 
 #logo-wrapper {
@@ -181,6 +187,11 @@ h1 {
     width: 100%;
     height: 8px;
 }
+
+
+/* =========================================================
+   BANNER
+   ========================================================= */
 
 #banner,
 #banner_wartung {
@@ -218,6 +229,11 @@ h1 {
     min-height: 100px;
 }
 
+
+/* =========================================================
+   BOXES
+   ========================================================= */
+
 .box {
     margin: 16px 0;
     padding: 16px 18px;
@@ -244,7 +260,9 @@ h1 {
 }
 
 
-/* TI APPLICATION STATUS */
+/* =========================================================
+   TI APPLICATION STATUS
+   ========================================================= */
 
 .status-container {
     display: grid;
@@ -252,10 +270,10 @@ h1 {
     grid-template-columns:
         repeat(
             auto-fit,
-            minmax(165px, 1fr)
+            minmax(170px, 1fr)
         );
 
-    gap: 12px;
+    gap: 6px;
 
     margin: 12px 0 16px;
 }
@@ -267,11 +285,11 @@ h1 {
     align-items: center;
     justify-content: space-between;
 
-    gap: 10px;
+    gap: 6px;
 
     min-width: 0;
 
-    padding: 10px 12px;
+    padding: 6px 10px;
 
     background: var(--surface);
 
@@ -288,7 +306,6 @@ h1 {
 
 .status-card:hover {
     box-shadow: var(--shadow-md);
-
     transform: translateY(-1px);
 }
 
@@ -299,7 +316,7 @@ h1 {
 
     color: var(--text);
 
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 500;
     line-height: 1.3;
 
@@ -309,7 +326,7 @@ h1 {
 .status-card-value {
     flex-shrink: 1;
 
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
 
     text-align: right;
@@ -361,6 +378,11 @@ h1 {
     border-color: var(--border);
 }
 
+
+/* =========================================================
+   LAST UPDATE
+   ========================================================= */
+
 .last-update {
     display: flex;
     align-items: center;
@@ -393,9 +415,13 @@ h1 {
 
 #statistics ul {
     padding: 0;
-
     list-style: none;
 }
+
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
 
 .button {
     display: inline-flex;
@@ -465,8 +491,10 @@ h1 {
 }
 
 a.button {
-    display: inline-block;
+    display: inline-flex;
+
     color: inherit;
+
     text-decoration: none;
 }
 
@@ -496,7 +524,9 @@ a.button {
 }
 
 
-/* ACCORDION */
+/* =========================================================
+   ACCORDION
+   ========================================================= */
 
 .accordion-element ul {
     margin: 0;
@@ -544,13 +574,11 @@ a.button {
 
 .availability-icon.impaired {
     background: var(--impaired);
-
     border-radius: 3px;
 }
 
 .availability-icon.unavailable {
     background: var(--unavailable);
-
     border-radius: 3px;
 }
 
@@ -597,8 +625,6 @@ a.button {
 
 .group-name {
     flex-grow: 1;
-
-    font-weight: 500;
 }
 
 .accordion-element:last-of-type {
@@ -623,7 +649,9 @@ a.button {
 }
 
 
-/* LINKS */
+/* =========================================================
+   LINKS
+   ========================================================= */
 
 a:any-link {
     color: var(--link);
@@ -648,7 +676,9 @@ a:focus-visible {
 }
 
 
-/* FOOTER */
+/* =========================================================
+   FOOTER
+   ========================================================= */
 
 #footer {
     display: flex;
@@ -678,25 +708,131 @@ a:focus-visible {
 }
 
 
-/* PLOT PAGE */
+/* =========================================================
+   PLOT PAGE
+   ========================================================= */
+
+#plot-period-parent {
+    width: 100%;
+
+    height: auto !important;
+    min-height: 0 !important;
+
+    overflow: visible !important;
+}
 
 #plot-period {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    gap: 4px;
+
     margin-top: 12px;
     margin-bottom: 12px;
+
+    height: auto !important;
+    min-height: 0 !important;
+
+    overflow: visible !important;
 }
 
 #plot-period .tab {
+    flex: 1 1 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    width: auto !important;
+    min-width: 0;
+
+    height: auto !important;
     min-height: 0 !important;
 
-    padding: 5px 12px !important;
+    padding: 7px 12px !important;
+
+    color: var(--text) !important;
+    background: var(--surface) !important;
+
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
 
     font-size: 0.9rem;
+    font-weight: 500;
     line-height: 1.2;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        color 0.15s ease,
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+#plot-period .tab:hover {
+    color: var(--text) !important;
+    background: var(--surface-hover) !important;
+
+    border-color: var(--border-strong);
 }
 
 #plot-period .tab--selected {
-    font-weight: 500;
+    color: var(--link) !important;
+    background: var(--surface-hover) !important;
+
+    border-color: var(--link);
+
+    font-weight: 600;
+
+    box-shadow:
+        0 0 0 1px
+        color-mix(
+            in srgb,
+            var(--link) 20%,
+            transparent
+        );
 }
+
+#plot-period .tab--selected:hover {
+    color: var(--link-hover) !important;
+    background: var(--surface-hover) !important;
+
+    border-color: var(--link-hover);
+}
+
+#plot-period .tab:focus-visible {
+    outline: 2px solid var(--link);
+    outline-offset: 2px;
+}
+
+
+/* DASH TAB CONTENT */
+
+#plot-period-parent > .tab-content {
+    height: 0 !important;
+    min-height: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    border: 0 !important;
+
+    overflow: hidden !important;
+}
+
+
+/* PLOT INFO */
 
 .plot-back-button {
     display: inline-block;
@@ -713,7 +849,9 @@ a:focus-visible {
 }
 
 
-/* ACCESSIBILITY */
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
     *,
@@ -724,12 +862,15 @@ a:focus-visible {
         transition-duration: 0.01ms !important;
 
         animation-duration: 0.01ms !important;
+
         animation-iteration-count: 1 !important;
     }
 }
 
 
-/* MOBILE */
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media (max-width: 600px) {
 
@@ -822,23 +963,51 @@ a:focus-visible {
 
     .status-card:hover {
         box-shadow: var(--shadow-sm);
-
         transform: none;
     }
 
 
     /* PLOT TABS */
 
+    #plot-period-parent {
+        width: 100%;
+
+        height: auto !important;
+        min-height: 0 !important;
+
+        overflow: visible !important;
+    }
+
     #plot-period {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: stretch;
+
+        width: 100%;
+
+        gap: 3px;
+
         margin-top: 10px;
         margin-bottom: 10px;
+
+        height: auto !important;
+        min-height: 0 !important;
+
+        overflow: visible !important;
     }
 
     #plot-period .tab {
-        padding: 4px 8px !important;
+        flex: 1 1 0;
+
+        min-width: 0;
+
+        padding: 6px 8px !important;
 
         font-size: 0.8rem;
         line-height: 1.1;
+
+        white-space: nowrap;
     }
 
     .plot-back-button {
