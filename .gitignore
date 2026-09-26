@@ -2,3 +2,4 @@
 test.py
 __pycache__
 data.hdf5
+data_cache.json
