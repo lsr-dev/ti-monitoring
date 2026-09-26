@@ -2,20 +2,22 @@ import dash
 from dash import Dash, html, dcc
 from mylibrary import *
 from myconfig import *
+from flask import send_from_directory
 
-app = Dash(__name__, use_pages=True, title='TI-Monitoring')
+app = Dash(
+    __name__,
+    use_pages=True,
+    suppress_callback_exceptions=True,
+    title="TI-Monitoring",
+)
 server = app.server
 
 def serve_layout():
     layout = [
         html.Header(children=[
+            html.Div(id="spacer"),
             html.Div(id='banner', children=[
-                html.Span('NEU: Jetzt auch als App verfügbar! '),
-                html.A(
-                    'Weitere Infos',
-                    href='https://app.ti-monitoring.de',
-                    target='_blank'
-                )
+                html.Span('Das ist ein Banner'),
             ]),
         
             html.Div(id='header-content', children=[
@@ -47,10 +49,8 @@ def serve_layout():
             ]),
 		]),
 		html.Div(id = 'footer', children = [
-            html.Div([html.A('Home', href=home_url, target='_self')]),
             html.Div([html.A('Alerts', href=home_url + '/alerts', target='_self')]),
             html.Div([html.A('Dokumentation', href='https://github.com/lsr-dev/ti-monitoring', target='_blank')]),
-            html.Div([html.A('Presse', href='https://heise.de/-10625281', target='_blank')]),
             html.Div([html.A('Datenschutz', href='', target='_blank')]),
             html.Div([html.A('Impressum', href='', target='_blank')]),
             html.Div('© Lukas Schmidt-Russnak'),

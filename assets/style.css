@@ -21,18 +21,13 @@
     --radius: 10px;
     --radius-sm: 6px;
 
-    --banner-bg: #1d4ed8;
-    --maintenance-bg: #b91c1c;
+    --banner-bg: #1a2ab9;
+    --maintenance-bg: #b50c14;
 
-    --available: #16a34a;
-    --impaired: #f59e0b;
-    --unavailable: #dc2626;
+    --available: green;
+    --impaired: orange;
+    --unavailable: red;
 }
-
-
-/* =========================================================
-   DARK MODE
-   ========================================================= */
 
 @media (prefers-color-scheme: dark) {
     :root {
@@ -54,22 +49,17 @@
         --shadow-md: 0 10px 35px rgba(0, 0, 0, 0.45);
 
         --banner-bg: #2947c7;
-        --maintenance-bg: #b91c1c;
+        --maintenance-bg: #b50c14;
 
-        --available: #22c55e;
-        --impaired: #fbbf24;
-        --unavailable: #ef4444;
+        --available: green;
+        --impaired: orange;
+        --unavailable: red;
     }
 
     #logo {
         filter: invert(1);
     }
 }
-
-
-/* =========================================================
-   BASE
-   ========================================================= */
 
 html {
     font-family:
@@ -97,14 +87,9 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-
-/* =========================================================
-   MAIN CONTAINER
-   ========================================================= */
-
 #react-entry-point {
     width: 100%;
-    max-width: 1240px;
+    max-width: 1500px;
     min-height: 100vh;
 
     background: var(--surface);
@@ -112,18 +97,13 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-
-/* =========================================================
-   LAYOUT
-   ========================================================= */
-
 main,
 header,
 #footer {
     box-sizing: border-box;
 
     width: 100%;
-    max-width: 1240px;
+    max-width: 1500px;
 
     padding-left: 20px;
     padding-right: 20px;
@@ -136,17 +116,17 @@ main {
     padding-bottom: 30px;
 }
 
-
-/* =========================================================
-   HEADER
-   ========================================================= */
-
 header {
     display: flex;
     flex-wrap: wrap;
+
     position: fixed;
 
+    top: 0;
     left: 50%;
+
+    width: 100%;
+    max-width: 1500px;
 
     transform: translateX(-50%);
 
@@ -166,10 +146,10 @@ header {
     width: 100%;
 }
 
-
-/* =========================================================
-   LOGO
-   ========================================================= */
+h1 {
+    margin-block-start: 0.5em !important;
+    margin-block-end: 0.5em !important;    
+}
 
 #logo-wrapper {
     display: flex;
@@ -197,10 +177,10 @@ header {
     opacity: 0.85;
 }
 
-
-/* =========================================================
-   BANNERS
-   ========================================================= */
+#spacer {
+    width: 100%;
+    height: 8px;
+}
 
 #banner,
 #banner_wartung {
@@ -234,19 +214,9 @@ header {
     color: #fff;
 }
 
-
-/* =========================================================
-   PAGE CONTENT
-   ========================================================= */
-
 #_pages_content {
     min-height: 100px;
 }
-
-
-/* =========================================================
-   BOXES
-   ========================================================= */
 
 .box {
     margin: 16px 0;
@@ -274,20 +244,158 @@ header {
 }
 
 
-/* =========================================================
-   STATISTICS
-   ========================================================= */
+/* TI APPLICATION STATUS */
+
+.status-container {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(165px, 1fr)
+        );
+
+    gap: 12px;
+
+    margin: 12px 0 16px;
+}
+
+.status-card {
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+
+    min-width: 0;
+
+    padding: 10px 12px;
+
+    background: var(--surface);
+
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.status-card:hover {
+    box-shadow: var(--shadow-md);
+
+    transform: translateY(-1px);
+}
+
+.status-card-title {
+    min-width: 0;
+
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+}
+
+.status-card-value {
+    flex-shrink: 1;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    text-align: right;
+
+    white-space: nowrap;
+}
+
+.status-ok {
+    color: var(--available);
+
+    background: color-mix(
+        in srgb,
+        var(--available) 5%,
+        var(--surface)
+    );
+
+    border-color: var(--available);
+}
+
+.status-full {
+    color: var(--unavailable);
+
+    background: color-mix(
+        in srgb,
+        var(--unavailable) 5%,
+        var(--surface)
+    );
+
+    border-color: var(--unavailable);
+}
+
+.status-partial {
+    color: var(--impaired);
+
+    background: color-mix(
+        in srgb,
+        var(--impaired) 5%,
+        var(--surface)
+    );
+
+    border-color: var(--impaired);
+}
+
+.status-unknown {
+    color: var(--text-muted);
+
+    background: var(--surface);
+
+    border-color: var(--border);
+}
+
+.last-update {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 2px;
+
+    color: var(--text-muted);
+
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.last-update-timestamp,
+.data-source,
+.data-disclaimer {
+    color: var(--text-muted);
+}
+
+.loading {
+    padding: 30px 20px;
+
+    color: var(--text-muted);
+
+    text-align: center;
+}
 
 #statistics ul {
     padding: 0;
 
     list-style: none;
 }
-
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
 
 .button {
     display: inline-flex;
@@ -356,10 +464,11 @@ header {
     outline-offset: 2px;
 }
 
-
-/* =========================================================
-   TOUCH DEVICES
-   ========================================================= */
+a.button {
+    display: inline-block;
+    color: inherit;
+    text-decoration: none;
+}
 
 @media (hover: none) {
     .button:hover {
@@ -387,9 +496,7 @@ header {
 }
 
 
-/* =========================================================
-   ACCORDION
-   ========================================================= */
+/* ACCORDION */
 
 .accordion-element ul {
     margin: 0;
@@ -402,11 +509,6 @@ header {
     flex-grow: 0;
     flex-shrink: 0;
 }
-
-
-/* =========================================================
-   STATUS ICONS
-   ========================================================= */
 
 .accordion-element-title .availability-icon,
 .accordion-element-content ul li span {
@@ -452,11 +554,6 @@ header {
     border-radius: 3px;
 }
 
-
-/* =========================================================
-   ACCORDION TITLE
-   ========================================================= */
-
 .accordion-element-title {
     display: flex;
     align-items: center;
@@ -478,24 +575,14 @@ header {
     pointer-events: none;
 }
 
-
-/* ---------------------------------------------------------
-   OPEN STATE
-   --------------------------------------------------------- */
-
 .accordion-element.is-open > .accordion-element-title,
 .accordion-element-title.is-open {
     background: var(--surface-hover);
 }
 
-
-/* ---------------------------------------------------------
-   DESKTOP HOVER ONLY
-   --------------------------------------------------------- */
-
 @media (hover: hover) and (pointer: fine) {
     .accordion-element-title:hover {
-        padding-left: 12px;
+        padding-left: 8px;
 
         background: var(--surface-hover);
 
@@ -503,20 +590,10 @@ header {
     }
 }
 
-
-/* ---------------------------------------------------------
-   KEYBOARD FOCUS
-   --------------------------------------------------------- */
-
 .accordion-element-title:focus-visible {
     outline: 2px solid var(--link);
     outline-offset: -2px;
 }
-
-
-/* =========================================================
-   GROUP NAME
-   ========================================================= */
 
 .group-name {
     flex-grow: 1;
@@ -527,11 +604,6 @@ header {
 .accordion-element:last-of-type {
     border-bottom: 1px solid var(--border);
 }
-
-
-/* =========================================================
-   ACCORDION CONTENT
-   ========================================================= */
 
 .accordion-element-content {
     height: 0;
@@ -551,9 +623,7 @@ header {
 }
 
 
-/* =========================================================
-   LINKS
-   ========================================================= */
+/* LINKS */
 
 a:any-link {
     color: var(--link);
@@ -578,9 +648,7 @@ a:focus-visible {
 }
 
 
-/* =========================================================
-   FOOTER
-   ========================================================= */
+/* FOOTER */
 
 #footer {
     display: flex;
@@ -610,9 +678,42 @@ a:focus-visible {
 }
 
 
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
+/* PLOT PAGE */
+
+#plot-period {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+#plot-period .tab {
+    min-height: 0 !important;
+
+    padding: 5px 12px !important;
+
+    font-size: 0.9rem;
+    line-height: 1.2;
+}
+
+#plot-period .tab--selected {
+    font-weight: 500;
+}
+
+.plot-back-button {
+    display: inline-block;
+
+    margin-bottom: 12px;
+}
+
+.plot-period-info {
+    margin: 8px 0 12px;
+
+    color: var(--text-muted);
+
+    font-size: 0.85rem;
+}
+
+
+/* ACCESSIBILITY */
 
 @media (prefers-reduced-motion: reduce) {
     *,
@@ -628,9 +729,7 @@ a:focus-visible {
 }
 
 
-/* =========================================================
-   MOBILE
-   ========================================================= */
+/* MOBILE */
 
 @media (max-width: 600px) {
 
@@ -672,5 +771,90 @@ a:focus-visible {
         padding: 14px;
 
         border-radius: var(--radius-sm);
+    }
+
+
+    /* STATUS CARDS */
+
+    .status-container {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        gap: 8px;
+
+        margin-top: 10px;
+        margin-bottom: 12px;
+    }
+
+    .status-card {
+        gap: 6px;
+
+        min-height: 0;
+
+        padding: 7px 8px;
+
+        border-width: 1px;
+        border-radius: var(--radius-sm);
+
+        box-shadow: none;
+    }
+
+    .status-card-title {
+        font-size: 0.85rem;
+        line-height: 1.2;
+
+        overflow-wrap: anywhere;
+    }
+
+    .status-card-value {
+        flex-shrink: 1;
+
+        font-size: 0.78rem;
+        line-height: 1.2;
+
+        text-align: right;
+
+        white-space: normal;
+    }
+
+    .status-card:hover {
+        box-shadow: var(--shadow-sm);
+
+        transform: none;
+    }
+
+
+    /* PLOT TABS */
+
+    #plot-period {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    #plot-period .tab {
+        padding: 4px 8px !important;
+
+        font-size: 0.8rem;
+        line-height: 1.1;
+    }
+
+    .plot-back-button {
+        margin-bottom: 10px;
+    }
+
+
+    /* LAST UPDATE */
+
+    .last-update {
+        flex-direction: column;
+
+        gap: 4px;
+
+        margin-top: 2px;
+
+        font-size: 0.8rem;
     }
 }

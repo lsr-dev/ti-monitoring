@@ -43,13 +43,4 @@ var favicon_svg = document.createElement('icon')
 favicon_svg.rel = 'icon'
 favicon_svg.type = 'image/svg+xml'
 favicon_svg.href = 'assets/logo.svg'
-document.getElementsByTagName('head')[0].appendChild(favicon_svg)var favicon_png = document.createElement('link')
-favicon_png.rel = 'apple-touch-icon'
-favicon_png.type = 'image/png'
-favicon_png.href = 'assets/favicon.png'
-document.getElementsByTagName('head')[0].appendChild(favicon_png)
-var favicon_svg = document.createElement('icon')
-favicon_svg.rel = 'icon'
-favicon_svg.type = 'image/svg+xml'
-favicon_svg.href = 'assets/logo.svg'
 document.getElementsByTagName('head')[0].appendChild(favicon_svg)

@@ -29,6 +29,8 @@ def serve_layout():
                 html.Li('Tippen Sie auf „Subscribe“.')
             ]
         ),
+        html.P('Falls Sie die Android-Version der ntfy-App nutzen, können Sie anstelle der manuellen Konfiguration (Schritte 2 bis 5) den folgenden QR-Code scannen:'),
+        html.Img(src='assets/qr-code-android.png', width='100px'),
         html.H3('Option 2'),
         html.P(
             children = [

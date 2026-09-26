@@ -1,5 +1,6 @@
 # URL for API
 url = "https://ti-lage.prod.ccs.gematik.solutions/lageapi/v1/tilage/bu/PU"
+app_status_url = "https://ti-lage.prod.ccs.gematik.solutions/lageapi/v2/tilage"
 
 # path to hdf5 file for saving the availability data 
 file_name = "data.hdf5"
@@ -23,7 +24,7 @@ smtp_settings = {
 home_url = 'https://ti-monitoring.de'
 
 # time frame for statistics in web app
-stats_delta_hours = 12
+stats_delta_hours = 24
 
 # switching push notofications on/off
 push_notifications = False

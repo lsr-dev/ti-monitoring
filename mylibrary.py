@@ -3,146 +3,707 @@ import numpy as np
 import pandas as pd
 import h5py as h5
 import requests, json, time, pytz, os
-from datetime import datetime
+from datetime import datetime, timezone
 from tzlocal import get_localzone
+import tempfile
 import smtplib
 from email.message import EmailMessage
 from email.mime.text import MIMEText
 
+DATA_CACHE_FILE = os.getenv(
+    "DATA_CACHE_FILE",
+    "data_cache.json",
+)
+
 def initialize_data_file(file_name):
     """
-    Creates hdf5 file if necessary and builds up basic group structure
-    
+    Creates HDF5 file if necessary and builds up basic
+    group structure.
+
     Args:
-        file_name (str): Path to hdf5 file
+        file_name (str): Path to HDF5 file.
 
     Returns:
         None
     """
-    if not(os.path.isfile(file_name)):
+
+    if not os.path.isfile(file_name):
         with h5.File(file_name, "w") as f:
             f.create_group("availability")
             f.create_group("configuration_items")
+            f.create_group("app_status")
 
-def update_file(file_name, url):
-    """
-    Gets current data from API and updates hdf5 file
+def update_cis(file_name, url):
+    response = requests.get(
+        url,
+        headers={
+            "Accept": "application/json",
+        },
+        timeout=10,
+    )
 
-    Args:
-        file_name (str): Path to hdf5 file
-        url (str): URL of API
+    response.raise_for_status()
 
-    Returns:
-        None
-    """
-    data = json.loads(requests.get(url).text)
+    data = response.json()
+
     df = pd.DataFrame(data)
+
+    current_data = []
+
+    # -------------------------------------------------
+    # HDF5 datatype for historical availability
+    # -------------------------------------------------
+
+    history_dtype = np.dtype([
+        (
+            "timestamp",
+            "S32",
+        ),
+        (
+            "availability",
+            "i1",
+        ),
+    ])
+
     with h5.File(file_name, "a") as f:
+
         for idx in range(len(df)):
+
             ci = df.iloc[idx]
-            # availybility
-            group_av = f.require_group("availability/" + str(ci["ci"]))
-            av = int(ci["availability"])
-            utc_time = datetime.strptime(ci["time"], '%Y-%m-%dT%H:%M:%S.%fZ').replace(tzinfo=pytz.UTC)
-            timestamp = utc_time.timestamp()
-            ds = group_av.require_dataset(str(timestamp),shape=(),dtype=int)
-            ds[()] = av
-            # configuration items
-            group_ci = f.require_group("configuration_items/" + str(ci["ci"]))
-            str_256 = h5.string_dtype(encoding='utf-8', length=256)
-            for property in ["tid", "bu", "organization", "pdt", "product", "name", "comment", "time"]:
-                ds = group_ci.require_dataset(property, shape=(), dtype=str_256)
-                ds[()] = ci[property]
-            if "current_availability" in group_ci:
-                prev_av = group_ci["current_availability"][()]
-                av_diff = av - prev_av
+
+            ci_id = str(
+                ci["ci"]
+            )
+
+            # -------------------------------------------------
+            # Timestamp
+            # -------------------------------------------------
+
+            timestamp = str(
+                ci["time"]
+            )
+
+            # -------------------------------------------------
+            # Availability
+            # -------------------------------------------------
+
+            av = int(
+                ci["availability"]
+            )
+
+            # -------------------------------------------------
+            # Historical availability
+            # -------------------------------------------------
+
+            availability_group = (
+                f.require_group(
+                    "availability"
+                )
+            )
+
+            ci_history_group = (
+                availability_group.require_group(
+                    ci_id
+                )
+            )
+
+            if "history" not in ci_history_group:
+
+                history = (
+                    ci_history_group.create_dataset(
+                        "history",
+                        shape=(0,),
+                        maxshape=(None,),
+                        dtype=history_dtype,
+                    )
+                )
+
             else:
+
+                history = (
+                    ci_history_group["history"]
+                )
+
+            # -------------------------------------------------
+            # Prevent duplicate timestamps
+            # -------------------------------------------------
+
+            duplicate = False
+
+            if len(history) > 0:
+
+                last_timestamp = (
+                    history[-1]["timestamp"]
+                )
+
+                if isinstance(
+                    last_timestamp,
+                    bytes,
+                ):
+                    last_timestamp = (
+                        last_timestamp.decode(
+                            "utf-8"
+                        )
+                    )
+
+                if last_timestamp == timestamp:
+                    duplicate = True
+
+            # -------------------------------------------------
+            # Append historical value
+            # -------------------------------------------------
+
+            if not duplicate:
+
+                old_length = len(history)
+
+                history.resize(
+                    old_length + 1,
+                    axis=0,
+                )
+
+                history[old_length] = (
+                    timestamp.encode("utf-8"),
+                    av,
+                )
+
+            # -------------------------------------------------
+            # Configuration item metadata
+            # -------------------------------------------------
+
+            group_ci = (
+                f.require_group(
+                    "configuration_items/"
+                    + ci_id
+                )
+            )
+
+            str_256 = h5.string_dtype(
+                encoding="utf-8",
+                length=256,
+            )
+
+            for property in [
+                "tid",
+                "bu",
+                "organization",
+                "pdt",
+                "product",
+                "name",
+                "comment",
+                "time",
+            ]:
+
+                ds = group_ci.require_dataset(
+                    property,
+                    shape=(),
+                    dtype=str_256,
+                )
+
+                ds[()] = str(
+                    ci[property]
+                )
+
+            # -------------------------------------------------
+            # Availability difference
+            # -------------------------------------------------
+
+            if "current_availability" in group_ci:
+
+                prev_av = int(
+                    group_ci[
+                        "current_availability"
+                    ][()]
+                )
+
+                av_diff = (
+                    av - prev_av
+                )
+
+            else:
+
                 av_diff = 0
-            ds = group_ci.require_dataset("availability_difference",shape=(),dtype=int)
+
+            ds = group_ci.require_dataset(
+                "availability_difference",
+                shape=(),
+                dtype=int,
+            )
+
             ds[()] = av_diff
-            ds = group_ci.require_dataset("current_availability",shape=(),dtype=int)
+
+            # -------------------------------------------------
+            # Current availability
+            # -------------------------------------------------
+
+            ds = group_ci.require_dataset(
+                "current_availability",
+                shape=(),
+                dtype=int,
+            )
+
             ds[()] = av
 
-def get_availability_data_of_ci(file_name, ci):
+            # -------------------------------------------------
+            # Data returned to cron.py
+            # -------------------------------------------------
+
+            current_data.append(
+                {
+                    "ci": ci_id,
+                    "tid": str(
+                        ci["tid"]
+                    ),
+                    "bu": str(
+                        ci["bu"]
+                    ),
+                    "organization": str(
+                        ci["organization"]
+                    ),
+                    "pdt": str(
+                        ci["pdt"]
+                    ),
+                    "product": str(
+                        ci["product"]
+                    ),
+                    "name": str(
+                        ci["name"]
+                    ),
+                    "comment": str(
+                        ci["comment"]
+                    ),
+                    "time": timestamp,
+                    "availability_difference": int(
+                        av_diff
+                    ),
+                    "current_availability": av,
+                }
+            )
+
+    return pd.DataFrame(
+        current_data
+    )
+
+def update_apps(file_name, url):
     """
-    Gets availability data for a specific configuration item from hdf5 file
+    Gets current TI application status from the API,
+    updates the app_status HDF5 history and returns the
+    current application status.
 
     Args:
-        file_name (str): Path to hdf5 file
-        ci (str): ID of the desired confirguration item
+        file_name: Path to the HDF5 file.
+        url: URL of the TI Lage API.
 
     Returns:
-        DataFrame: Time series of the availability of the desired configuration item
+        dict: Current TI application status.
     """
-    all_ci_data = []
-    with h5.File(file_name, 'r') as f:
-        group = f["availability/" + ci]
-        ci_data = {}
-        times = []
-        values = []
-        for name, dataset in group.items():
-            if isinstance(dataset, h5.Dataset):
-                time = pd.to_datetime(float(name), unit='s').tz_localize('UTC').tz_convert('Europe/Berlin')
-                times.append(time)
-                values.append(int(dataset[()]))
-        ci_data["times"] = np.array(times)
-        ci_data["values"] = np.array(values)
-        return pd.DataFrame(ci_data)
+
+    response = requests.get(
+        url,
+        headers={
+            "Accept": "application/json",
+        },
+        timeout=10,
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    # -------------------------------------------------
+    # Timestamp
+    # -------------------------------------------------
+
+    timestamp = data.get(
+        "timestamp"
+    )
+
+    if timestamp is None:
+
+        timestamp = datetime.now(
+            timezone.utc
+        ).isoformat()
+
+    timestamp = str(
+        timestamp
+    )
+
+    # -------------------------------------------------
+    # Application status
+    # -------------------------------------------------
+
+    app_status = data.get(
+        "appStatus",
+        {}
+    )
+
+    # -------------------------------------------------
+    # HDF5 datatype for application history
+    # -------------------------------------------------
+
+    history_dtype = np.dtype([
+        (
+            "timestamp",
+            "S32",
+        ),
+        (
+            "status",
+            "S32",
+        ),
+    ])
+
+    with h5.File(
+        file_name,
+        "a",
+    ) as f:
+
+        group = f.require_group(
+            "app_status"
+        )
+
+        for app_name, app_data in app_status.items():
+
+            # -------------------------------------------------
+            # Application subgroup
+            # -------------------------------------------------
+
+            app_group = group.require_group(
+                str(app_name)
+            )
+
+            # -------------------------------------------------
+            # Current status
+            # -------------------------------------------------
+
+            status = app_data.get(
+                "status"
+            )
+
+            if status is None:
+
+                status = "unknown"
+
+            status = str(
+                status
+            )
+
+            # -------------------------------------------------
+            # History dataset
+            # -------------------------------------------------
+
+            if "history" not in app_group:
+
+                history = app_group.create_dataset(
+                    "history",
+                    shape=(0,),
+                    maxshape=(None,),
+                    dtype=history_dtype,
+                )
+
+            else:
+
+                history = app_group[
+                    "history"
+                ]
+
+            # -------------------------------------------------
+            # Prevent duplicate timestamps
+            # -------------------------------------------------
+
+            duplicate = False
+
+            if len(history) > 0:
+
+                last_timestamp = (
+                    history[-1]["timestamp"]
+                )
+
+                if isinstance(
+                    last_timestamp,
+                    bytes,
+                ):
+
+                    last_timestamp = (
+                        last_timestamp.decode(
+                            "utf-8"
+                        )
+                    )
+
+                if last_timestamp == timestamp:
+
+                    duplicate = True
+
+            # -------------------------------------------------
+            # Append new status
+            # -------------------------------------------------
+
+            if not duplicate:
+
+                old_length = len(
+                    history
+                )
+
+                history.resize(
+                    old_length + 1,
+                    axis=0,
+                )
+
+                history[old_length] = (
+                    timestamp.encode(
+                        "utf-8"
+                    ),
+                    status.encode(
+                        "utf-8"
+                    ),
+                )
+
+    return data
+
+def read_data_cache():
+    """
+    Read the complete current-state cache.
+
+    Returns an empty dictionary if the cache does not exist
+    or contains invalid JSON.
+    """
+
+    try:
+        with open(
+            DATA_CACHE_FILE,
+            "r",
+            encoding="utf-8",
+        ) as file:
+            return json.load(file)
+
+    except (
+        FileNotFoundError,
+        json.JSONDecodeError,
+        OSError,
+    ):
+        return {}
+
+def write_data_cache(data):
+    """
+    Atomically write the complete current-state cache.
+    """
+
+    directory = os.path.dirname(
+        os.path.abspath(DATA_CACHE_FILE)
+    )
+
+    fd, temporary_file = tempfile.mkstemp(
+        dir=directory,
+        prefix=".data_cache_",
+        suffix=".tmp",
+    )
+
+    try:
+        with os.fdopen(
+            fd,
+            "w",
+            encoding="utf-8",
+        ) as file:
+            json.dump(
+                data,
+                file,
+                ensure_ascii=False,
+                indent=2,
+            )
+
+        os.replace(
+            temporary_file,
+            DATA_CACHE_FILE,
+        )
+
+    except Exception:
+        try:
+            os.unlink(temporary_file)
+        except OSError:
+            pass
+
+        raise
+        
+def update_data_cache(section, data):
+    """
+    Update one section of the shared data cache.
+
+    Example:
+        update_data_cache("app_status", status_data)
+
+    keeps the existing "cis" section intact.
+    """
+
+    cache = read_data_cache()
+
+    cache[section] = data
+
+    cache["cached_at"] = datetime.now(
+        timezone.utc
+    ).isoformat()
+
+    write_data_cache(cache)
+
+def get_availability_data_of_ci(
+    file_name,
+    ci,
+):
+    """
+    Gets historical availability data of a CI.
+
+    Args:
+        file_name (str): Path to the HDF5 file.
+        ci (str): Configuration item ID.
+
+    Returns:
+        DataFrame:
+            Columns:
+                - times
+                - values
+    """
+
+    with h5.File(file_name, "r") as f:
+
+        history = f[
+            "availability/"
+            + str(ci)
+            + "/history"
+        ]
+
+        timestamps = history["timestamp"][:]
+        values = history["availability"][:]
+
+    # HDF5 strings may be returned as bytes.
+    timestamps = [
+        timestamp.decode("utf-8")
+        if isinstance(timestamp, bytes)
+        else timestamp
+        for timestamp in timestamps
+    ]
+
+    times = pd.to_datetime(
+        timestamps,
+        utc=True,
+    ).tz_convert(
+        get_localzone()
+    )
+
+    return pd.DataFrame(
+        {
+            "times": times,
+            "values": values,
+        }
+    )
 
 def get_data_of_all_cis(file_name):
     """
-    Gets general data for all configuration items from hdf5 file such as organization
-    and product as well as current availability and availability difference
+    Gets general data for all configuration items from
+    the HDF5 file, such as organization, product,
+    current availability and availability difference.
 
     Args:
-        file_name (str): Path to hdf5 file
+        file_name (str): Path to HDF5 file.
 
     Returns:
-        DataFrame: Basic information about all configuration items
+        DataFrame: Basic information about all
+        configuration items.
     """
+
     all_ci_data = []
-    with h5.File(file_name, 'r') as f:
-        group = f["configuration_items"]
-        cis = group.keys()
-        for ci in cis:
-            group = f["configuration_items/"+ci]
-            ci_data = {}
-            ci_data["ci"] = ci
-            for name in group:
-                dataset = group[name]
+
+    with h5.File(file_name, "r") as f:
+
+        configuration_items = f[
+            "configuration_items"
+        ]
+
+        for ci in configuration_items:
+
+            ci_group = configuration_items[ci]
+
+            ci_data = {
+                "ci": ci
+            }
+
+            for name in ci_group:
+
+                dataset = ci_group[name]
+
+                # Only read scalar datasets.
+                if not isinstance(
+                    dataset,
+                    h5.Dataset,
+                ):
+                    continue
+
                 value = dataset[()]
-                # Handle scalar bytes (decode)
-                if isinstance(value, bytes):
-                    value = value.decode('utf-8')
+
+                if isinstance(
+                    value,
+                    bytes,
+                ):
+                    value = value.decode(
+                        "utf-8"
+                    )
+
                 ci_data[name] = value
-            #df = pd.DataFrame(ci_data)
-            all_ci_data.append(ci_data)
-    return pd.DataFrame(all_ci_data)
+
+            all_ci_data.append(
+                ci_data
+            )
+
+    return pd.DataFrame(
+        all_ci_data
+    )
 
 def get_data_of_ci(file_name, ci):
     """
-    Gets general data for a specific configuration item from hdf5 file
+    Gets general data for a specific configuration
+    item from the HDF5 file.
 
     Args:
-        file_name (str): Path to hdf5 file
-        ci (str): ID of the desired confirguration item
+        file_name (str): Path to HDF5 file.
+        ci (str): ID of the desired configuration item.
 
     Returns:
-        DataFrame: General data of the desired configuration item
+        dict: General data of the desired
+        configuration item.
     """
-    all_ci_data = []
-    with h5.File(file_name, 'r') as f:
-        group = f["configuration_items/"+ci]
-        ci_data = {}
-        ci_data["ci"] = ci
-        for name in group:
-            dataset = group[name]
+
+    with h5.File(file_name, "r") as f:
+
+        ci_group = f[
+            "configuration_items/"
+            + str(ci)
+        ]
+
+        ci_data = {
+            "ci": str(ci)
+        }
+
+        for name in ci_group:
+
+            dataset = ci_group[name]
+
+            # Only read scalar datasets.
+            if not isinstance(
+                dataset,
+                h5.Dataset,
+            ):
+                continue
+
             value = dataset[()]
-            # Handle scalar bytes (decode)
-            if isinstance(value, bytes):
-                value = value.decode('utf-8')
+
+            if isinstance(
+                value,
+                bytes,
+            ):
+                value = value.decode(
+                    "utf-8"
+                )
+
             ci_data[name] = value
-    return pd.DataFrame([ci_data])
+
+    return ci_data
 
 def pretty_timestamp(timestamp_str):
     """
