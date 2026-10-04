@@ -148,15 +148,15 @@ def create_app_status(cache):
 
         elif outage == "full":
             status_class = "status-full"
-            status_text = "Totalausfall"
+            status_text = "TOTAL\u00adAUSFALL"
 
         elif outage == "partial":
             status_class = "status-partial"
-            status_text = "Teilstörung"
+            status_text = "TEIL\u00adSTÖRUNG"
 
         else:
             status_class = "status-unknown"
-            status_text = "Unbekannt"
+            status_text = "UNBEKANNT"
 
         service_description = (
             SERVICE_DESCRIPTIONS.get(
