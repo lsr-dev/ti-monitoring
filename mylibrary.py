@@ -347,7 +347,7 @@ def update_apps(file_name, url):
             "S32",
         ),
         (
-            "status",
+            "outage",
             "S32",
         ),
     ])
@@ -375,16 +375,15 @@ def update_apps(file_name, url):
             # Current status
             # -------------------------------------------------
 
-            status = app_data.get(
-                "status"
+            outage = app_data.get(
+                "outage"
             )
 
-            if status is None:
-
-                status = "unknown"
+            if outage is None:
+                outage = "unknown"
 
             status = str(
-                status
+                outage
             )
 
             # -------------------------------------------------
