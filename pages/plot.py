@@ -29,22 +29,6 @@ def get_plot_data(ci, period):
             ci_data["times"] >= cutoff
         ]
 
-    elif period == "all":
-        now = pd.Timestamp.now(
-            tz=get_localzone()
-        )
-
-        start_of_week = (
-            now
-            - pd.Timedelta(
-                days=now.weekday()
-            )
-        ).normalize()
-
-        ci_data = ci_data[
-            ci_data["times"] >= start_of_week
-        ]
-
     return ci_data
 
 
@@ -275,9 +259,17 @@ def update_plot(
         ci_data
     )
 
+    period_info = html.Div(
+        className="plot-period-info",
+        children=[
+            "Hinweis: ..."
+        ],
+    )
+
     return (
         statistics,
         graph,
+        period_info,
     )
 
 
